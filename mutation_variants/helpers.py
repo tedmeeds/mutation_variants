@@ -7,6 +7,9 @@ import os, sys
 import pdb
 from sklearn.metrics import roc_auc_score, roc_curve
 from sklearn.model_selection import KFold
+import seaborn as sns
+sns.set(style="whitegrid")
+
 HOME_DIR =  os.environ["HOME"]
 DATA_DIR = os.path.join( HOME_DIR, "data/mutation_variants/" )
 RESULTS_DIR = os.path.join( HOME_DIR, "results/mutation_variants/" )
@@ -40,3 +43,15 @@ def xval_folds( n, K, randomize = False, seed = None ):
     test.append( test_ids )
   
   return train, test
+  
+def check_and_mkdir( path_name, verbose = False ):
+  ok = False
+  if os.path.exists( path_name ) == True:
+    ok = True
+  else:
+    if verbose:
+      print "Making directory: ", path_name
+    os.makedirs( path_name )
+    ok = True
+      
+  return ok
