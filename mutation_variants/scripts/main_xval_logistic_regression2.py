@@ -60,7 +60,7 @@ def main( X, normed_y, results_location, normalization, K, l2s ):
       print "     number of 0's " + str((1-train_y).sum())
       # model = LogisticRegression( dim, l2=l2 )
       model = LogisticRegression( dim, l1=l2 )
-      model.fit( train_X, train_y, lr=1e-3, n_epochs = n_epochs, logging_frequency=100 )
+      model.fit( train_X, train_y, lr=1e-3, n_epochs = n_epochs, logging_frequency=500 )
   
       predict_y = np.squeeze( model.predict(test_X).data.numpy() )
 
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     results_modifier  = sys.argv[4]
   
   # nbr of epochs for training
-  n_epochs = 2000
+  n_epochs = 4000
   
   # regularization parameters for L2 penalty
   l2s = [10.0, 1.0, 0.5, 0.1, 0.05, 0.01, 0.001, 0.0001]# ,0.001,0.0005]
