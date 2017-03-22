@@ -126,7 +126,7 @@ if __name__ == "__main__":
   
   print "USING L1 = ", use_l1  
   # nbr of epochs for training
-  n_epochs = 4000
+  n_epochs = 400
   
   # regularization parameters for L2 penalty
   l2s = [0.1 ,0.001,0.0005,0.0001,0.00001,0.000001]
@@ -225,5 +225,5 @@ if __name__ == "__main__":
     
     keep_genes = genes[ order_weights[ :int(len(order_weights)*decay_rate)] ]
     
-    x_data_select = x_data[ keep_genes ]
+    x_data_select = x_datax_data.loc[ query.index ][ keep_genes ]
     seed+=1
