@@ -58,7 +58,8 @@ def main( X, normed_y, results_location, normalization, K, l2s ):
       
       print "     number of 1's " + str(train_y.sum())
       print "     number of 0's " + str((1-train_y).sum())
-      model = LogisticRegression( dim, l2=l2 )
+      # model = LogisticRegression( dim, l2=l2 )
+      model = LogisticRegression( dim, l1=l2 )
       model.fit( train_X, train_y, lr=1e-3, n_epochs = n_epochs, logging_frequency=100 )
   
       predict_y = np.squeeze( model.predict(test_X).data.numpy() )
