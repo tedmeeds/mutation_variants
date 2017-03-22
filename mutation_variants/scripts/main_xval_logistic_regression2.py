@@ -46,8 +46,9 @@ def main( X, normed_y, results_location, normalization, K, l1s, l2s ):
   Ys = []
   for idx in range(len(l2s)):
     l2 = l2s[idx]
-    l1 = l2s[idx]
+    l1 = l1s[idx]
     print "running xval for l2 = ",l2
+    print "running xval for l1 = ",l1
     k = 0
     w_l2 = 0.0
     for train_ids, test_ids in zip( tr_ids, te_ids ):
