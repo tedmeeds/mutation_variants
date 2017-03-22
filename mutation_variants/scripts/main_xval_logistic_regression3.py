@@ -129,7 +129,7 @@ if __name__ == "__main__":
   n_epochs = 4000
   
   # regularization parameters for L2 penalty
-  l2s = [10.0, 1.0, 0.5, 0.1 ,0.001,0.0005]
+  l2s = [1.0, 0.5, 0.1 ,0.001,0.0005]
   l1s = [1.0, 0.1, 0.01, 0.005, 0.001, 0.0001]
   #l1s = np.array(l2s)/100
   # K-folds of X-validation
