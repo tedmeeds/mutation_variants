@@ -19,7 +19,7 @@ def load_y( data_location ):
   
   return y
   
-def main( X, normed_y, results_location, normalization, K, l1s, l2s, percent_kept, use_l1 ):
+def main( X, normed_y, results_location, normalization, K, l1s, l2s, percent_kept, use_l1, seed ):
   if use_l1 is True:
     regs = l1s
   else:
@@ -34,7 +34,7 @@ def main( X, normed_y, results_location, normalization, K, l1s, l2s, percent_kep
   
   n,dim = normed_X.values.shape
   
-  tr_ids, te_ids = xval_folds( n, K, randomize = True, seed = 1 )
+  tr_ids, te_ids = xval_folds( n, K, randomize = True, seed = seed )
   
   aucs = np.zeros( len(regs) )
   y_true = np.squeeze( normed_y.values ).astype(int)
@@ -93,7 +93,7 @@ def main( X, normed_y, results_location, normalization, K, l1s, l2s, percent_kep
   Ys = np.array(Ys)
   
   
-  fig.savefig( results_location + "/select_%0.2f_aucs.png"%(percent_kept), fmt="png", bbox_inches='tight')
+  fig.savefig( results_location + "/select_%0.4f_aucs.png"%(percent_kept), fmt="png", bbox_inches='tight')
   
   return normed_X, normed_y, Ys, aucs, Ws
   
@@ -130,7 +130,7 @@ if __name__ == "__main__":
   
   # regularization parameters for L2 penalty
   l2s = [1.0, 0.5, 0.1 ,0.001,0.0005]
-  l1s = [0.01, 0.005, 0.001, 0.0001]
+  l1s = [0.001, 0.0001, 0.00001, 0.000001]
   #l1s = np.array(l2s)/100
   # K-folds of X-validation
   K   = 5
@@ -178,14 +178,17 @@ if __name__ == "__main__":
   #
   #
   n = len(x_data_select)
-  decay_rate = 0.5
+  decay_rate = 0.75
   percent_kept = 1.0
-  while percent_kept > 0.001:
+  seed = 0
+  while percent_kept > 0.0001:
     
     normed_X, normed_y, Ys, aucs, Ws = main( x_data_select, \
                                              y_data_select, \
                                              results_location, \
-                                             normalization, K, l1s, l2s, percent_kept, use_l1 )
+                                             normalization, K, \
+                                             l1s, l2s, percent_kept, \
+                                             use_l1, seed )
     genes = normed_X.columns
 
     best_auc_id = np.argmax(aucs)
@@ -198,7 +201,7 @@ if __name__ == "__main__":
       best_l2     = l2s[best_auc_id]
     order_weights = np.argsort( -np.abs(best_w) )
 
-    nbr_2_select = min(100, len(order_weights) )
+    nbr_2_select = min(200, len(order_weights) )
 
     weight_ids = order_weights[ :nbr_2_select]
     best_genes = genes[ weight_ids ]
@@ -215,12 +218,12 @@ if __name__ == "__main__":
       ax_horz.set_title( "AUC = %0.3f L2 = %f K = %d"%(best_auc,best_l2,K ))
     #
     #
-    f_vert.savefig( results_location + "/selection_%0.2f_best_w_vert.png"%(percent_kept), fmt="png", bbox_inches='tight')
-    f_horz.savefig( results_location + "/selection_%0.2f_best_w_horz.png"%(percent_kept), fmt="png", bbox_inches='tight')
+    f_vert.savefig( results_location + "/selection_%0.4f_best_w_vert.png"%(percent_kept), fmt="png", bbox_inches='tight')
+    f_horz.savefig( results_location + "/selection_%0.4f_best_w_horz.png"%(percent_kept), fmt="png", bbox_inches='tight')
 
     percent_kept *= decay_rate
     
-    keep_genes = genes[ order_weights[ :(len(order_weights)*decay_rate)] ]
+    keep_genes = genes[ order_weights[ :int(len(order_weights)*decay_rate)] ]
     
     x_data_select = x_data_select[ keep_genes ]
-    
+    seed+=1
