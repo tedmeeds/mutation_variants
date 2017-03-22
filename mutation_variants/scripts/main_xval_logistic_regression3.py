@@ -84,7 +84,7 @@ def main( X, normed_y, results_location, normalization, K, l1s, l2s, percent_kep
     auc = roc_auc_score( y_true, y_est )
     print "    => AUC = %f"%(auc)
     fpr,tpr,thresholds = roc_curve( y_true, y_est )
-    pp.plot( fpr, tpr, 'o-', label = "%s = %0.2f"%(str(l2),auc) )
+    pp.plot( fpr, tpr, 'o-', label = "%s = %0.2f"%(str(reg),auc) )
 
     aucs[idx] = auc 
   pp.legend(loc="lower right")  
