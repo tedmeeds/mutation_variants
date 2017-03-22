@@ -116,7 +116,8 @@ if __name__ == "__main__":
   use_l1 = False
   if len( sys.argv ) > 5:
     use_l1  = bool( sys.argv[5] )
-    
+  
+  print "USING L1 = ", use_l1  
   # nbr of epochs for training
   n_epochs = 4000
   
