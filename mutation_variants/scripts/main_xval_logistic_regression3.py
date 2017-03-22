@@ -225,5 +225,5 @@ if __name__ == "__main__":
     
     keep_genes = genes[ order_weights[ :int(len(order_weights)*decay_rate)] ]
     
-    x_data_select = x_data.loc[ keep_genes ]
+    x_data_select = x_data[ keep_genes ]
     seed+=1
