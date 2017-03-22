@@ -126,7 +126,7 @@ if __name__ == "__main__":
   
   print "USING L1 = ", use_l1  
   # nbr of epochs for training
-  n_epochs = 400
+  n_epochs = 6000
   
   # regularization parameters for L2 penalty
   l2s = [0.1 ,0.001,0.0005,0.0001,0.00001,0.000001]
