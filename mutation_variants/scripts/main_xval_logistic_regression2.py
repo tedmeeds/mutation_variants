@@ -115,13 +115,13 @@ if __name__ == "__main__":
     file_name_y  = sys.argv[3]
   
   # nbr of epochs for training
-  n_epochs = 1000
+  n_epochs = 2000
   
   # regularization parameters for L2 penalty
-  l2s = [0.1]# ,0.001,0.0005]
+  l2s = [10.0, 1.0, 0.1, 0.01, 0.001, 0.0001]# ,0.001,0.0005]
   
   # K-folds of X-validation
-  K   = 2
+  K   = 4
   
   # we assume a folder: ~/data/mutation_variants
   # then an extra folder for this data: ~/data/mutation_variants/extra_folder
