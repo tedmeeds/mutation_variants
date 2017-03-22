@@ -39,12 +39,12 @@ def main( X, normed_y, results_location, normalization, K, l1s, l2s ):
   
   aucs = np.zeros( len(l2s) )
   y_true = np.squeeze( normed_y.values ).astype(int)
-  #predictions = np.zeros( (n,len(l1s)), dtype=float )
+  predictions = np.zeros( (n,len(l1s)), dtype=float )
   predictions = np.zeros( (n,len(l2s)), dtype=float )
   fig = pp.figure()
   Ws = []
   Ys = []
-  for idx in range(len(l2s)):
+  for idx in range(len(l1s)):
     l2 = l2s[idx]
     l1 = l1s[idx]
     print "running xval for l2 = ",l2
