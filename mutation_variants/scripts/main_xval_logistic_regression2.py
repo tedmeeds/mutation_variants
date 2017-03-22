@@ -113,15 +113,19 @@ if __name__ == "__main__":
     
   if len( sys.argv ) > 3:
     file_name_y  = sys.argv[3]
+    
+  results_modifier = ""
+  if len( sys.argv ) > 4:
+    results_modifier  = sys.argv[4]
   
   # nbr of epochs for training
   n_epochs = 2000
   
   # regularization parameters for L2 penalty
-  l2s = [10.0, 1.0, 0.1, 0.01, 0.001, 0.0001]# ,0.001,0.0005]
+  l2s = [10.0, 1.0, 0.5, 0.1, 0.05, 0.01, 0.001, 0.0001]# ,0.001,0.0005]
   
   # K-folds of X-validation
-  K   = 4
+  K   = 5
   
   # we assume a folder: ~/data/mutation_variants
   # then an extra folder for this data: ~/data/mutation_variants/extra_folder
@@ -158,7 +162,7 @@ if __name__ == "__main__":
   #
   # # assumes results folder: ~/data/mutation_variants/extra_folder/
   #
-  results_location = os.path.join( RESULTS_DIR, extra_folder )
+  results_location = os.path.join( RESULTS_DIR, extra_folder+results_modifier )
   check_and_mkdir(results_location)
   #
   #print "Data location: ", data_location
