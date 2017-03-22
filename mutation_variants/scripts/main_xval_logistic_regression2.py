@@ -3,21 +3,39 @@ from mutation_variants.data.data import *
 from mutation_variants.models.logistic_regression import *
 from mutation_variants.viz.viz_weights import *
 
+def load_x( data_location ):
+  X =  pd.read_csv( data_location, sep="\t", index_col=0 )
   
-def main( data_location, results_location, normalization, K, l2s ):
-  X = load_from_csv( data_location )
+  # pdb.set_trace()
+  # genes = X.index.values
+  # barcodes = X.columns.values
+  # mutations = X["APC_MUTATED"].values
+  # R = X[genes].values
   
-  genes = X.columns[2:].values
-  barcodes = X["Unnamed: 0"].values
-  mutations = X["APC_MUTATED"].values
-  R = X[genes].values
+  return X.T
+  
+def load_y( data_location ):
+  y =  pd.read_csv( data_location, sep="\t", index_col=0 )
+  
+  return y
+  
+def main( X, normed_y, results_location, normalization, K, l2s ):
+  #pd.read_csv( location, sep = sep )
+  #X =  pd.read_csv( data_location, sep="\t", index_col=0 )
+  
+  #pdb.set_trace()
+  genes = X.columns.values
+  barcodes = X.index.values
+  #mutations = y["mutation_status"].values
+  
+  R = X.values #X[genes].values
   
   normed_X = pd.DataFrame( normalization( R ), columns = genes, index = barcodes )
-  normed_y = pd.DataFrame( mutations, columns = ["mutation"], index = barcodes )
+  #normed_y = pd.DataFrame( mutations, columns = ["mutation"], index = barcodes )
   
   n,dim = normed_X.values.shape
   
-  tr_ids, te_ids = xval_folds( n, K, randomize = True, seed = 0 )
+  tr_ids, te_ids = xval_folds( n, K, randomize = True, seed = 1 )
   
   aucs = np.zeros( len(l2s) )
   y_true = np.squeeze( normed_y.values ).astype(int)
@@ -38,8 +56,10 @@ def main( data_location, results_location, normalization, K, l2s ):
       train_y = torch.from_numpy(normed_y.values[train_ids].astype(int)).float() 
       test_X = torch.from_numpy(normed_X.values[test_ids,:]).float() 
       
+      print "     number of 1's " + str(train_y.sum())
+      print "     number of 0's " + str((1-train_y).sum())
       model = LogisticRegression( dim, l2=l2 )
-      model.fit( train_X, train_y, lr=5*1e-1, n_epochs = n_epochs, logging_frequency=10000 )
+      model.fit( train_X, train_y, lr=1e-3, n_epochs = n_epochs, logging_frequency=100 )
   
       predict_y = np.squeeze( model.predict(test_X).data.numpy() )
 
@@ -89,16 +109,19 @@ if __name__ == "__main__":
     extra_folder = sys.argv[1]
     
   if len( sys.argv ) > 2:
-    file_name  = sys.argv[2]
+    file_name_x  = sys.argv[2]
+    
+  if len( sys.argv ) > 3:
+    file_name_y  = sys.argv[3]
   
   # nbr of epochs for training
   n_epochs = 1000
   
   # regularization parameters for L2 penalty
-  l2s = [0.005,0.001,0.0005]
+  l2s = [0.1]# ,0.001,0.0005]
   
   # K-folds of X-validation
-  K   = 4
+  K   = 2
   
   # we assume a folder: ~/data/mutation_variants
   # then an extra folder for this data: ~/data/mutation_variants/extra_folder
@@ -113,38 +136,64 @@ if __name__ == "__main__":
   #normalization = global_order_normalization
   
   # this is the full path of file:  ~/data/mutation_variants/extra_folder/COUNT_DATA.csv
-  data_location = os.path.join( DATA_DIR, extra_folder, file_name )
+  x_location = os.path.join( DATA_DIR, extra_folder, file_name_x )
+  y_location = os.path.join( DATA_DIR, extra_folder, file_name_y )
   
-  # assumes results folder: ~/data/mutation_variants/extra_folder/
+  x_data = load_x( x_location )
+  y_data = load_y( y_location )
   
+  # filter mss and impact
+  stable      = y_data["mss"] == 1
+  high_impact_stable = stable&(y_data["expected_impact"]==3)
+  no_impact_stable   = stable&(y_data["expected_impact"]==0)
+  
+  query = high_impact_stable | no_impact_stable
+  
+  query = query[ query.values ]
+  x_data_select = x_data.loc[ query.index ]
+
+  y_data_select = y_data.loc[ query.index ]
+  y_data_select["mutation"] = (y_data_select["expected_impact"]==3).astype(int)
+  y_data_select = y_data_select[ "mutation" ]
+  #
+  # # assumes results folder: ~/data/mutation_variants/extra_folder/
+  #
   results_location = os.path.join( RESULTS_DIR, extra_folder )
   check_and_mkdir(results_location)
-  
-  print "Data location: ", data_location
+  #
+  #print "Data location: ", data_location
   print "Results location: ", results_location
-  
-  
-  normed_X, normed_y, Ys, aucs, Ws = main( data_location, results_location, normalization, K, l2s )
+  #
+  #
+  normed_X, normed_y, Ys, aucs, Ws = main( x_data_select, \
+                                           y_data_select, \
+                                           results_location, \
+                                           normalization, K, l2s )
   genes = normed_X.columns
-  
+
   best_auc_id = np.argmax(aucs)
   best_w      = Ws[best_auc_id]
   best_y_est  = Ys[best_auc_id]
   best_auc    = aucs[best_auc_id]
   best_l2     = l2s[best_auc_id]
-  order_weights = np.argsort( -best_w )
+  order_weights = np.argsort( -np.abs(best_w) )
+
+  nbr_2_select = 100
   
-  f_vert,ax_vert = viz_weights_vertical( best_w, genes )
+  weight_ids = order_weights[ :nbr_2_select]
+  best_genes = genes[ weight_ids ]
+  best_weights = best_w[ weight_ids ]
+  f_vert,ax_vert = viz_weights_vertical( best_weights, best_genes )
   ax_vert.set_title( "AUC = %0.3f L2 = %f K = %d"%(best_auc,best_l2,K ))
-  f_horz,ax_horz = viz_weights_horizontal( best_w, genes )
+  f_horz,ax_horz = viz_weights_horizontal( best_weights, best_genes )
   ax_horz.set_title( "AUC = %0.3f L2 = %f K = %d"%(best_auc,best_l2,K ))
-  pp.show()
-  
+  #
+  #
   f_vert.savefig( results_location + "/xval_best_w_vert.png", fmt="png", bbox_inches='tight')
   f_horz.savefig( results_location + "/xval_best_w_horz.png", fmt="png", bbox_inches='tight')
-  
-  
-  
+
+
+  # 
   
   
   

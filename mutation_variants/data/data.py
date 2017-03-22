@@ -31,5 +31,5 @@ def global_order_normalization( X ):
   max_val = np.max(X)
   return X.astype(float)/max_val
     
-def load_from_csv( location ):
-  return pd.read_csv( location )
+def load_from_csv( location, sep = "," ):
+  return pd.read_csv( location, sep = sep )

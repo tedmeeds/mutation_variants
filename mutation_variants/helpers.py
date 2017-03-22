@@ -25,12 +25,15 @@ def bootstraps( x, m ):
   return N
   
 def xval_folds( n, K, randomize = False, seed = None ):
-  if randomize:
+  if randomize is True:
+    print("XVAL RANDOMLY PERMUTING")
     if seed is not None:
+      print( "XVAL SETTING SEED = %d"%(seed) )
       np.random.seed(seed)
       
     x = np.random.permutation(n)
   else:
+    print( "XVAL JUST IN ARANGE ORDER")
     x = np.arange(n,dtype=int)
     
   kf = KFold( K )
@@ -39,9 +42,9 @@ def xval_folds( n, K, randomize = False, seed = None ):
   for train_ids, test_ids in kf.split( x ):
     #train_ids = np.setdiff1d( x, test_ids )
     
-    train.append( train_ids )
-    test.append( test_ids )
-  
+    train.append( x[train_ids] )
+    test.append( x[test_ids] )
+  #pdb.set_trace()
   return train, test
   
 def check_and_mkdir( path_name, verbose = False ):
