@@ -181,6 +181,7 @@ if __name__ == "__main__":
   decay_rate = 0.5
   percent_kept = 1.0
   while percent_kept > 0.001:
+    
     normed_X, normed_y, Ys, aucs, Ws = main( x_data_select, \
                                              y_data_select, \
                                              results_location, \
@@ -221,5 +222,5 @@ if __name__ == "__main__":
     
     keep_genes = genes[ order_weights[ :(len(order_weights)*decay_rate)] ]
     
-    normed_X = normed_X[ keep_genes ]
+    x_data_select = x_data_select[ keep_genes ]
     
