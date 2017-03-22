@@ -19,7 +19,7 @@ def load_y( data_location ):
   
   return y
   
-def main( X, normed_y, results_location, normalization, K, l2s ):
+def main( X, normed_y, results_location, normalization, K, l1s, l2s ):
   #pd.read_csv( location, sep = sep )
   #X =  pd.read_csv( data_location, sep="\t", index_col=0 )
   
@@ -46,6 +46,7 @@ def main( X, normed_y, results_location, normalization, K, l2s ):
   Ys = []
   for idx in range(len(l2s)):
     l2 = l2s[idx]
+    l1 = l2s[idx]
     print "running xval for l2 = ",l2
     k = 0
     w_l2 = 0.0
@@ -59,7 +60,7 @@ def main( X, normed_y, results_location, normalization, K, l2s ):
       print "     number of 1's " + str(train_y.sum())
       print "     number of 0's " + str((1-train_y).sum())
       # model = LogisticRegression( dim, l2=l2 )
-      model = LogisticRegression( dim, l2=l2 )
+      model = LogisticRegression( dim, l1=l1 )
       model.fit( train_X, train_y, lr=1e-3, n_epochs = n_epochs, logging_frequency=500 )
   
       predict_y = np.squeeze( model.predict(test_X).data.numpy() )
@@ -124,7 +125,7 @@ if __name__ == "__main__":
   
   # regularization parameters for L2 penalty
   l2s = [10.0, 1.0, 0.5, 0.1, 0.05, 0.01, 0.001, 0.0001]# ,0.001,0.0005]
-  
+  l1s = np.array(l2s)/100
   # K-folds of X-validation
   K   = 5
   
@@ -173,7 +174,7 @@ if __name__ == "__main__":
   normed_X, normed_y, Ys, aucs, Ws = main( x_data_select, \
                                            y_data_select, \
                                            results_location, \
-                                           normalization, K, l2s )
+                                           normalization, K, l1s, l2s )
   genes = normed_X.columns
 
   best_auc_id = np.argmax(aucs)
