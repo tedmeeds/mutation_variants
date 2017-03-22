@@ -126,7 +126,8 @@ if __name__ == "__main__":
   
   # regularization parameters for L2 penalty
   l2s = [10.0, 1.0, 0.5, 0.1, 0.05, 0.01, 0.001, 0.0001]# ,0.001,0.0005]
-  l1s = np.array(l2s)/100
+  l1s = [0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001]
+  #l1s = np.array(l2s)/100
   # K-folds of X-validation
   K   = 5
   
