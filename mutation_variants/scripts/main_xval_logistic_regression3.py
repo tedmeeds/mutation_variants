@@ -180,7 +180,7 @@ if __name__ == "__main__":
   n = len(x_data_select)
   decay_rate = 0.5
   percent_kept = 1.0
-  while percent_kept > 0.01:
+  while percent_kept > 0.001:
     normed_X, normed_y, Ys, aucs, Ws = main( x_data_select, \
                                              y_data_select, \
                                              results_location, \
@@ -197,7 +197,7 @@ if __name__ == "__main__":
       best_l2     = l2s[best_auc_id]
     order_weights = np.argsort( -np.abs(best_w) )
 
-    nbr_2_select = 100
+    nbr_2_select = min(100, len(order_weights) )
 
     weight_ids = order_weights[ :nbr_2_select]
     best_genes = genes[ weight_ids ]
