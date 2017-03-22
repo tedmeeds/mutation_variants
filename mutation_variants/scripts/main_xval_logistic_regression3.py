@@ -129,8 +129,8 @@ if __name__ == "__main__":
   n_epochs = 4000
   
   # regularization parameters for L2 penalty
-  l2s = [0.1 ,0.001,0.0005,0.0001,0.00001]
-  l1s = [0.001, 0.0001, 0.00001, 0.000001]
+  l2s = [0.1 ,0.001,0.0005,0.0001,0.00001,0.000001]
+  l1s = [0.001, 0.0001, 0.00001, 0.000001, 0.0000001]
   #l1s = np.array(l2s)/100
   # K-folds of X-validation
   K   = 5
@@ -178,7 +178,7 @@ if __name__ == "__main__":
   #
   #
   n = len(x_data_select)
-  decay_rate = 0.75
+  decay_rate = 0.5
   percent_kept = 1.0
   seed = 0
   while percent_kept > 0.0001:
@@ -201,7 +201,7 @@ if __name__ == "__main__":
       best_l2     = l2s[best_auc_id]
     order_weights = np.argsort( -np.abs(best_w) )
 
-    nbr_2_select = min(200, len(order_weights) )
+    nbr_2_select = min(75, len(order_weights) )
 
     weight_ids = order_weights[ :nbr_2_select]
     best_genes = genes[ weight_ids ]

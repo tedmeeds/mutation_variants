@@ -43,7 +43,7 @@ def viz_weights_horizontal( w, names ):
   pos = w_ordered >=0
   ax1.plot( x_values[pos], w_ordered[pos], 'bo' )
   ax1.plot( x_values[neg], w_ordered[neg], 'ro' )
-  pp.xticks(x_values, names[order], rotation='vertical', fontsize=8)
+  pp.xticks(x_values, names[order], rotation=30, fontsize=8)
   pp.margins(0.05)
   pp.subplots_adjust(bottom=0.15)
   ax1.grid(color='k', linestyle='--', linewidth=0.5,axis='y',alpha=0.5)
