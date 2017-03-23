@@ -204,21 +204,36 @@ if __name__ == "__main__":
 
     seed+=1
   
+  genes = normed_X.columns
+  
   all_ws = np.array(all_ws)
   all_aucs = np.array(all_aucs)
   all_ys = np.array(all_ys)
   
-  pdb.set_trace()  
-  genes = normed_X.columns
-
+  aucs = all_aucs.mean(0)
   best_auc_id = np.argmax(aucs)
-  best_w      = Ws[best_auc_id]
-  best_y_est  = Ys[best_auc_id]
+  
+  best_ws = np.squeeze(all_ws[:,best_auc_id,:])
+  best_y_ests = np.squeeze(all_ys[:,best_auc_id,:])
   best_auc    = aucs[best_auc_id]
+
   if use_l1 is True:
     best_l2     = l1s[best_auc_id]
   else:
     best_l2     = l2s[best_auc_id]
+    
+  
+  mean_w =   best_ws.mean(0)  
+  order_weights = np.argsort( -mean_w )
+  
+  pp.figure()
+  pp.plot( best_ws[:,order_weights], '.-', alpha=0.5)
+  pp.show()
+  pdb.set_trace()  
+  
+
+
+
   order_weights = np.argsort( -np.abs(best_w) )
 
   nbr_2_select = min(75, len(order_weights) )
