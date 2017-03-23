@@ -74,9 +74,9 @@ class LogisticRegression(object):
           weight_cost += self.l2*torch.sum( torch.pow( self.w, 2 ) )
       else:
         if self.l1 > 0:
-          weight_cost += self.l1*torch.sum( torch.abs( self.w )/self.weakness_weights )
+          weight_cost += self.l1*torch.sum( torch.abs( self.w/self.weakness_weights ) )
         if self.l2 > 0:
-          weight_cost += self.l2*torch.sum( torch.pow( self.w, 2 )/self.weakness_weights )
+          weight_cost += self.l2*torch.sum( torch.pow( self.w/self.weakness_weights, 2 ) )
         
       loss = data_cost + weight_cost
       loss.backward()

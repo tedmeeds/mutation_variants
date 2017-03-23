@@ -96,7 +96,7 @@ def main( X, normed_y, results_location, normalization, K, l1s, l2s, weakness, u
   Ys = np.array(Ys)
   
   
-  fig.savefig( results_location + "/select_%0.4f_aucs.png"%(percent_kept), fmt="png", bbox_inches='tight')
+  fig.savefig( results_location + "/select_repeat_%d_aucs.png"%(seed), fmt="png", bbox_inches='tight')
   
   return normed_X, normed_y, Ys, aucs, Ws
   
@@ -129,16 +129,16 @@ if __name__ == "__main__":
   
   print "USING L1 = ", use_l1  
   # nbr of epochs for training
-  n_epochs = 1000
+  n_epochs = 2000
   
   # regularization parameters for L2 penalty
-  l2s = [0.1 ,0.001] #,0.0005,0.0001,0.00001,0.000001]
-  l1s = [0.001, 0.0001] #, 0.00001, 0.000001, 0.0000001]
+  l2s = [0.01,0.005,0.001,0.0005,0.0001] #,0.00001,0.000001]
+  l1s = [0.01, 0.001, 0.0005, 0.0001] #, 0.00001, 0.000001, 0.0000001]
   weakness = 0.1
   
   #l1s = np.array(l2s)/100
   # K-folds of X-validation
-  K   = 3
+  K   = 4
   
   # we assume a folder: ~/data/mutation_variants
   # then an extra folder for this data: ~/data/mutation_variants/extra_folder
