@@ -223,24 +223,27 @@ if __name__ == "__main__":
     best_l2     = l2s[best_auc_id]
     
   
+  median_w = np.median( best_ws, 0 )
   mean_w =   best_ws.mean(0)  
+  
   order_weights = np.argsort( -mean_w )
+
+  order_weights_med = np.argsort( -np.abs(median_w) )
   
-  pp.figure()
-  pp.plot( best_ws[:,order_weights].T, '.-', alpha=0.5)
-  pp.show()
-  pdb.set_trace()  
+  # pp.figure()
+  # pp.plot( best_ws[:,order_weights].T, '.-', alpha=0.5)
+  # pp.show()
+  # pdb.set_trace()
   
 
+  
 
-
-  order_weights = np.argsort( -np.abs(best_w) )
 
   nbr_2_select = min(75, len(order_weights) )
 
   weight_ids = order_weights[ :nbr_2_select]
   best_genes = genes[ weight_ids ]
-  best_weights = best_w[ weight_ids ]
+  best_weights = mean_w[ weight_ids ]
   f_vert,ax_vert = viz_weights_vertical( best_weights, best_genes )
   if use_l1 is True:
     ax_vert.set_title( "AUC = %0.3f L1 = %f K = %d"%(best_auc,best_l2,K ))
@@ -253,11 +256,30 @@ if __name__ == "__main__":
     ax_horz.set_title( "AUC = %0.3f L2 = %f K = %d"%(best_auc,best_l2,K ))
   #
   #
-  f_vert.savefig( results_location + "/selection_%0.4f_best_w_vert.png"%(percent_kept), fmt="png", bbox_inches='tight')
-  f_horz.savefig( results_location + "/selection_%0.4f_best_w_horz.png"%(percent_kept), fmt="png", bbox_inches='tight')
+  f_vert.savefig( results_location + "/rand_selection_mean_w_vert.png", fmt="png", bbox_inches='tight')
+  f_horz.savefig( results_location + "/rand_selection_mean_w_horz.png", fmt="png", bbox_inches='tight')
 
-  percent_kept *= decay_rate
-  
-  keep_genes = genes[ order_weights[ :int(len(order_weights)*decay_rate)] ]
-  
-  x_data_select = x_data.loc[ query.index ][ keep_genes ]
+  weight_ids = order_weights_med[ :nbr_2_select]
+  best_genes = genes[ weight_ids ]
+  best_weights = mean_w[ weight_ids ]
+  f_vert,ax_vert = viz_weights_vertical( best_weights, best_genes )
+  if use_l1 is True:
+    ax_vert.set_title( "AUC = %0.3f L1 = %f K = %d"%(best_auc,best_l2,K ))
+  else:
+    ax_vert.set_title( "AUC = %0.3f L2 = %f K = %d"%(best_auc,best_l2,K ))
+  f_horz,ax_horz = viz_weights_horizontal( best_weights, best_genes )
+  if use_l1 is True:
+    ax_horz.set_title( "AUC = %0.3f L1 = %f K = %d"%(best_auc,best_l2,K ))
+  else:
+    ax_horz.set_title( "AUC = %0.3f L2 = %f K = %d"%(best_auc,best_l2,K ))
+  #
+  #
+  f_vert.savefig( results_location + "/rand_selection_median__w_vert.png", fmt="png", bbox_inches='tight')
+  f_horz.savefig( results_location + "/rand_selection_median_w_horz.png", fmt="png", bbox_inches='tight')
+
+
+  # percent_kept *= decay_rate
+  #
+  # keep_genes = genes[ order_weights[ :int(len(order_weights)*decay_rate)] ]
+  #
+  # x_data_select = x_data.loc[ query.index ][ keep_genes ]
