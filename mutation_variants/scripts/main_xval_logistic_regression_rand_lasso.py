@@ -226,7 +226,7 @@ if __name__ == "__main__":
   median_w = np.median( best_ws, 0 )
   mean_w =   best_ws.mean(0)  
   
-  order_weights = np.argsort( -mean_w )
+  order_weights = np.argsort( -np.abs(mean_w) )
 
   order_weights_med = np.argsort( -np.abs(median_w) )
   
