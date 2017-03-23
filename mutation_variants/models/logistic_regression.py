@@ -12,12 +12,15 @@ import pylab as pp
 
 
 class LogisticRegression(object):
-  def __init__(self, dim, l1 = 0.0, l2 = 0.0 ):
+  def __init__(self, dim, l1 = 0.0, l2 = 0.0, weakness_weights = None ):
     super(LogisticRegression, self).__init__()
     self.dim       = dim
     self.l1        = l1
     self.l2        = l2
-
+    self.weakness_weights = None
+    if weakness_weights is not None:
+      self.weakness_weights = Variable( torch.FloatTensor( weakness_weights ), requires_grad=False)
+    
     self.model = torch.nn.Sequential()
     self.model.add_module("linear", torch.nn.Linear(self.dim, 1, bias=True))
     
@@ -64,11 +67,17 @@ class LogisticRegression(object):
       data_cost = -torch.mean( y*log_p_1 + (1-y)*log_p_2 )
       
       weight_cost = 0
-      if self.l1 > 0:
-        weight_cost += self.l1*torch.sum( torch.abs( self.w ) )
-      if self.l2 > 0:
-        weight_cost += self.l2*torch.sum( torch.pow( self.w, 2 ) )
-        #loss += l1*torch.sum( torch.abs( self.alpha) )
+      if self.weakness_weights is None:
+        if self.l1 > 0:
+          weight_cost += self.l1*torch.sum( torch.abs( self.w ) )
+        if self.l2 > 0:
+          weight_cost += self.l2*torch.sum( torch.pow( self.w, 2 ) )
+      else:
+        if self.l1 > 0:
+          weight_cost += self.l1*torch.sum( torch.abs( self.w )/self.weakness_weights )
+        if self.l2 > 0:
+          weight_cost += self.l2*torch.sum( torch.pow( self.w, 2 )/self.weakness_weights )
+        
       loss = data_cost + weight_cost
       loss.backward()
       optimizer.step()
